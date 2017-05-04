@@ -1,7 +1,7 @@
 #include "SerialCommand.h";
 
 SerialCommand sCmd;
-int DELAY_TIME = 50;
+int DELAY_TIME = 10;
 
 int PURPLE_PIN = 0;
 int THRESHHOLD = 550;
