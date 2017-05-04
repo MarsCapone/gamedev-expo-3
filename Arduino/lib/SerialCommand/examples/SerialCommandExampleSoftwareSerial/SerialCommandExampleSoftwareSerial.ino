@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 // Demo Code for SerialCommand Library.
 // This example uses a SoftwareSerial object instead of the Hardware Serial port. 
 // 

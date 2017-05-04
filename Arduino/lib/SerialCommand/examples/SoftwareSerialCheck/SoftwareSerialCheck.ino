@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 #include <SoftwareSerial.h>
 
 // Do you actually have your SoftwareSerial hooked up correctly?   Find out with this. 

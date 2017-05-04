@@ -1,4 +1,5 @@
-#include "SerialCommand.h";
+#include <Arduino.h>
+#include <SerialCommand.h>;
 
 SerialCommand sCmd;
 int DELAY_TIME = 10;
@@ -14,18 +15,20 @@ void setup() {
     Serial.begin(9600);
     while (!Serial);
 
+    sCmd.addCommand("PING_RATE", pingRateHandler);
+    sCmd.addCommand("PING_SIGNAL", pingSignalHandler);
     sCmd.addCommand("PING", pingHandler);
     sCmd.addCommand("ECHO", echoHandler);
-    sCmd.setDefaultHandler(errorHandler);
+    sCmd.addDefaultHandler(errorHandler);
 
     lastTime = 0;
 }
 
 void loop() {
-    if (Serial.available > 0) {
+    if (Serial.available() > 0) {
         sCmd.readSerial();
     }
-    
+
     hrSignal = analogRead(PURPLE_PIN);
     if (hrSignal > THRESHHOLD) {
         if (lastTime > 0) {
@@ -39,8 +42,15 @@ void loop() {
 }
 
 void pingHandler() {
-    //Serial.println("PONG");
+    Serial.println("PONG");
+}
+
+void pingRateHandler() {
     Serial.println(rate);
+}
+
+void pingSignalHandler() {
+    Serial.println(hrSignal);
 }
 
 void echoHandler() {
@@ -60,4 +70,3 @@ void errorHandler(const char *command) {
 float getRate(int msBetweenRR) {
     rate = 60 / (msBetweenRR / 1000);
 }
-

@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 // Demo Code for SerialCommand Library
 // Steven Cogswell
 // May 2011
