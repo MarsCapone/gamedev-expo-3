@@ -7,7 +7,7 @@ public class ZombieObject : MonoBehaviour {
     //properties
 
     //the player
-    GameObject player;
+    public GameObject player;
 
     //boolean states for zombie to be in
     private bool standing = false;
@@ -18,15 +18,15 @@ public class ZombieObject : MonoBehaviour {
     //roaming variables
     Vector3 home;
     float roamRange = 20f;
-    Vector3 currentRoamDest;
 
-    //movmenet speed of zombies
+    //movmenet of zombies
     float speed = 5f;
+    Vector3 currentDest;
 
 
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
         home = gameObject.transform.position;
         if(Random.value > 0.1f)
         {
@@ -41,12 +41,23 @@ public class ZombieObject : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (roaming)
+
+        if (alerted)
         {
-            gameObject.transform.position = Vector3.MoveTowards(gameObject.transform.position, currentRoamDest, speed * Time.deltaTime);
-            if(gameObject.transform.position == currentRoamDest)
+            currentDest = player.transform.position;
+        }
+        if (roaming || alerted || closing)
+        {
+            gameObject.transform.position = Vector3.MoveTowards(gameObject.transform.position, currentDest, speed * Time.deltaTime);
+            if(gameObject.transform.position == currentDest)
             {
-                setNewRoamDest();
+                if (roaming)
+                {
+                    setNewRoamDest();
+                }else if (alerted)
+                {
+                    Debug.Log("YOU DEAD!");
+                }
             }
         }
 	}
@@ -54,6 +65,21 @@ public class ZombieObject : MonoBehaviour {
     private void setNewRoamDest()
     {
         Vector2 tempRandomDest = Random.insideUnitCircle * roamRange;
-        currentRoamDest = home + new Vector3(tempRandomDest.x, 0, tempRandomDest.y);
+        currentDest = home + new Vector3(tempRandomDest.x, 0, tempRandomDest.y);
+    }
+
+    public void activate()
+    {
+        if (!alerted)
+        {
+            standing = false;
+            roaming = false;
+            alerted = true;
+
+            currentDest = player.transform.position; 
+
+
+
+        }
     }
 }
