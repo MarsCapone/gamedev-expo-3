@@ -4,10 +4,13 @@ using UnityEngine;
 
 public class ZombieObject : MonoBehaviour {
 
+    //settings
+    public float fractionMove = 0.7f;
+
     //properties
 
     //the player
-    public GameObject player;
+    private GameObject player;
 
     //boolean states for zombie to be in
     private bool standing = false;
@@ -16,19 +19,22 @@ public class ZombieObject : MonoBehaviour {
     private bool alerted = false;
 
     //roaming variables
-    Vector3 home;
-    float roamRange = 20f;
+    private Vector3 home;
+    public float roamRange = 10f;
 
     //movmenet of zombies
-    float speed = 5f;
-    Vector3 currentDest;
+    public float startSpeed = 1f;
+    public float maxSpeed = 5f;
+    private float speed;
+    private Vector3 currentDest;
 
 
 
     // Use this for initialization
     void Start () {
+        speed = startSpeed;
         home = gameObject.transform.position;
-        if(Random.value > 0.1f)
+        if(Random.value < fractionMove)
         {
             roaming = true;
             setNewRoamDest();
@@ -48,15 +54,25 @@ public class ZombieObject : MonoBehaviour {
         }
         if (roaming || alerted || closing)
         {
-            gameObject.transform.position = Vector3.MoveTowards(gameObject.transform.position, currentDest, speed * Time.deltaTime);
-            if(gameObject.transform.position == currentDest)
+            Vector3 direction = currentDest - transform.position;
+            Vector3 movement = direction.normalized * speed * Time.deltaTime;
+            if (movement.magnitude > direction.magnitude)
+            {
+                movement = direction;
+            }
+
+            // move the character:
+            GetComponent<CharacterController>().Move(movement);
+            
+            //TODO: Scale with final models
+            if((gameObject.transform.position - currentDest).magnitude < 1.1 )
             {
                 if (roaming)
                 {
                     setNewRoamDest();
                 }else if (alerted)
                 {
-                    Debug.Log("YOU DEAD!");
+                    Debug.Log("YOU DIED!");
                 }
             }
         }
@@ -68,17 +84,18 @@ public class ZombieObject : MonoBehaviour {
         currentDest = home + new Vector3(tempRandomDest.x, 0, tempRandomDest.y);
     }
 
-    public void activate()
+    public void activate(GameObject player)
     {
+        this.player = player;
         if (!alerted)
         {
             standing = false;
             roaming = false;
             alerted = true;
 
-            currentDest = player.transform.position; 
+            currentDest = player.transform.position;
 
-
+            speed = maxSpeed;
 
         }
     }

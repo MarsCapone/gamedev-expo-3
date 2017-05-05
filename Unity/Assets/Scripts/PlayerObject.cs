@@ -15,15 +15,22 @@ public class PlayerObject : MonoBehaviour {
 
         float speed = 5f;
         int layerMask = 1 << 8;
-        Collider[] zombiesInRange = Physics.OverlapSphere(gameObject.transform.position, 10, layerMask);
+        Collider[] zombiesInRange = Physics.OverlapSphere(gameObject.transform.position, radius, layerMask);
 
         foreach(Collider zombie in zombiesInRange)
         {
-            zombie.gameObject.GetComponent<ZombieObject>().activate();
+            zombie.gameObject.GetComponent<ZombieObject>().activate(this.gameObject);
         }
 
         // Move left/right with <- and -> or 'a' and 'd'
-        Vector3 direction = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical")) * speed * Time.deltaTime;
+        Vector3 direction = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
+
+        if (direction.magnitude > 1)
+        {
+            direction = direction.normalized;
+        }
+
+        direction = direction * speed * Time.deltaTime;
 
         gameObject.transform.position += direction;
 
