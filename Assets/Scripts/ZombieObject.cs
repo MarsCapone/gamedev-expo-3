@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class ZombieObject : MonoBehaviour {
 
     //settings
     public float fractionMove = 0.7f;
+    public float unalertMultiplier = 2;
 
     //properties
 
@@ -28,55 +30,84 @@ public class ZombieObject : MonoBehaviour {
     private float speed;
     private Vector3 currentDest;
 
+    private Vector3 startPos;
+
+    private NavMeshAgent navAgent;
 
 
     // Use this for initialization
     void Start () {
+
+        startPos = this.transform.position;
+
         speed = startSpeed;
         home = gameObject.transform.position;
-        if(Random.value < fractionMove)
+        moveOrStay();
+
+        if (roaming)
         {
-            roaming = true;
             setNewRoamDest();
         }
-        else
-        {
-            standing = true;
-        }
-	}
+
+        navAgent = GetComponent<NavMeshAgent>();
+    }
 	
 	// Update is called once per frame
 	void Update () {
-
+        
         if (alerted)
         {
-            currentDest = player.transform.position;
+            if (player.GetComponent<PlayerObject>().activationRadius * unalertMultiplier < (player.transform.position - this.transform.position).magnitude)
+            {
+                moveOrStay();
+                navAgent.SetDestination(startPos);
+                currentDest = startPos;
+                alerted = false;
+            }
+            else
+            {
+                currentDest = player.transform.position;
+            }
         }
+
+        if (closing)
+        {
+            home = (home + player.transform.position) / 2;
+        }
+
         if (roaming || alerted || closing)
         {
-            Vector3 direction = currentDest - transform.position;
-            Vector3 movement = direction.normalized * speed * Time.deltaTime;
-            if (movement.magnitude > direction.magnitude)
-            {
-                movement = direction;
-            }
-
             // move the character:
-            GetComponent<CharacterController>().Move(movement);
+            navAgent.SetDestination(currentDest);
             
             //TODO: Scale with final models
             if((gameObject.transform.position - currentDest).magnitude < 1.1 )
             {
-                if (roaming)
+                if (roaming || closing)
                 {
                     setNewRoamDest();
-                }else if (alerted)
+                }
+                else if (alerted)
                 {
                     Debug.Log("YOU DIED!");
                 }
             }
         }
 	}
+
+    private void moveOrStay()
+    {
+        if (Random.value < fractionMove)
+        {
+            roaming = true;
+            standing = false;
+        }
+        else
+        {
+            roaming = false;
+            standing = true;
+        }
+    }
 
     private void setNewRoamDest()
     {
@@ -91,6 +122,7 @@ public class ZombieObject : MonoBehaviour {
         {
             standing = false;
             roaming = false;
+            closing = false;
             alerted = true;
 
             currentDest = player.transform.position;
@@ -98,5 +130,14 @@ public class ZombieObject : MonoBehaviour {
             speed = maxSpeed;
 
         }
+    }
+
+    public void Closing(GameObject player)
+    {
+        this.player = player;
+        standing = false;
+        roaming = false;
+        closing = true;
+
     }
 }
