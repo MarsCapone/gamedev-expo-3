@@ -14,10 +14,8 @@ public class HRMonitor {
 
     private SerialPort stream;
 
-    public int READ_TIMEOUT = 50;
+    public static int READ_TIMEOUT = 50;
 
-    private bool TESTING = false;
-    System.Random r = new System.Random();
 
     /**
      * Initialise a heart rate monitor.
@@ -31,7 +29,7 @@ public class HRMonitor {
 
     public HRMonitor(string port) {
         this.port = port;
-        baudrate = 9600;
+        baudrate = 115200;
     }
 
     public void Open() {
@@ -40,22 +38,12 @@ public class HRMonitor {
         stream.Open();
     }
 
-    public void SetReadTimeout(int timeout)
+    public static void SetReadTimeout(int timeout)
     {
         READ_TIMEOUT = timeout;
     }
 
-    public void SetTesting(bool testing)
-    {
-        TESTING = testing;
-    }
-
-    private void Send(string message) {
-        stream.WriteLine(message);
-        stream.BaseStream.Flush();
-    }
-
-    private string Read(int timeout = 0) {
+    public string Read(int timeout = 0) {
         stream.ReadTimeout = timeout;
         try {
             return stream.ReadLine();
@@ -64,72 +52,9 @@ public class HRMonitor {
         }
     }
 
-    public double GetRate()
+
+    public string Read()
     {
-        if (TESTING) return r.NextDouble() * 100;
-        Send("PING_RATE");
-        string next = Read(READ_TIMEOUT);
-        return double.Parse(next);
+        return stream.ReadLine();
     }
-
-    public int GetSignal()
-    {
-        if (TESTING) return r.Next(0, 1024);
-        Send("PING_SIGNAL");
-        string next = Read(READ_TIMEOUT);
-        return int.Parse(next);
-    }
-
-    public bool CheckConnection()
-    {
-        Send("PING");
-        string next = Read(READ_TIMEOUT);
-        return next == "PONG";
-    }
-    
-
-    /**
-     * Invoke with:
-     * StartCoroutine(
-     *      AsyncronousRead(
-     *          (string s) => stringHandler,
-     *          () => errorHandler,
-     *          10f
-     *      );
-     * )
-     */
-    public IEnumerator AsynchronousRead(Action<string> callback, Action fail = null, float timeout = float.PositiveInfinity) {
-        DateTime initialTime = DateTime.Now;
-        DateTime nowTime;
-        TimeSpan diff = default(TimeSpan);
-
-        string data = null;
-
-        do {
-            try {
-                data = stream.ReadLine();
-            } catch (TimeoutException) {
-                data = null;
-            }
-
-            if (data != null) {
-                callback(data);
-                yield return null;
-            } else {
-                yield return new WaitForSeconds(0.05f);
-            }
-
-            nowTime = DateTime.Now;
-            diff = nowTime - initialTime;
-        } while (diff.Milliseconds < timeout);
-
-        if (fail != null) {
-            fail();
-        }
-
-        yield return null;
-    }
-
-
-
 }
