@@ -46,6 +46,8 @@ public class PlayerObject : MonoBehaviour {
     private void move()
     {
         float speed = 5f;
+        float gravity = 10f;
+
 
         // Move left/right with <- and -> or 'a' and 'd' etc
         Vector3 direction = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
@@ -56,6 +58,8 @@ public class PlayerObject : MonoBehaviour {
         }
 
         direction = direction * speed * Time.deltaTime;
+
+        direction.y -= gravity * Time.deltaTime;
 
         GetComponent<CharacterController>().Move(direction);
     }
