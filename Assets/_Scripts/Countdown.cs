@@ -12,7 +12,7 @@ public class Countdown : MonoBehaviour {
 
     [Tooltip("Set as a negative value in order to use the length of the audio clip.")]
     public float countdownTime = 90f;
-    public bool countdownTimeAsClipLength;
+    public bool clipLengthCountdown;
 
     private List<int> rates;
     private Text countdownText;
@@ -28,7 +28,7 @@ public class Countdown : MonoBehaviour {
         initCountdownTime = countdownTime;
 
         audioSource = gameObject.GetComponent<AudioSource>();
-        if (countdownTimeAsClipLength)
+        if (clipLengthCountdown)
         {
             countdownTime = audioSource.clip.length;
         }
@@ -51,7 +51,14 @@ public class Countdown : MonoBehaviour {
             {
                 total += r;
             }
-            monitor.SetBaseRate(Mathf.RoundToInt(total / rates.Count));
+
+            if (monitor.testing)
+            {
+                monitor.SetBaseRate(70);
+                monitor.SetInstaDeathRate(200);
+                monitor.Rate = 70;
+            }
+            else monitor.SetBaseRate(Mathf.RoundToInt(total / rates.Count));
 
             audioSource.Stop();
 
@@ -66,8 +73,15 @@ public class Countdown : MonoBehaviour {
 
     public void StartCountdown()
     {
-        start = true;
-        startStartTime = Time.time;
-        audioSource.Play();
+        if (monitor.testing)
+        {
+            countdownTime = -1;
+        }
+        else
+        {
+            start = true;
+            startStartTime = Time.time;
+            audioSource.Play();
+        }
     }
 }

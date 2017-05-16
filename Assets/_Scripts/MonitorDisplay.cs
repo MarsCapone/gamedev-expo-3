@@ -37,6 +37,10 @@ public class MonitorDisplay : MonoBehaviour
     public string port = "COM4";
     public int timeout = HRMonitor.READ_TIMEOUT;
     public bool testing = false;
+    public KeyCode increaseRate = KeyCode.Period;
+    public KeyCode decreaseRate = KeyCode.Comma;
+    public KeyCode increaseInstadeath = KeyCode.Semicolon;
+    public KeyCode decreaseInstadeath = KeyCode.L;
 
     public int Rate = 0;
 
@@ -64,7 +68,8 @@ public class MonitorDisplay : MonoBehaviour
     {
 
         hrm = new HRMonitor(port);
-        if (!testing) hrm.Open();
+        hrm.SetTesting(testing);
+        hrm.Open();
         HRMonitor.SetReadTimeout(timeout);
     }
 
@@ -103,7 +108,7 @@ public class MonitorDisplay : MonoBehaviour
                     signal = int.Parse(readings[2]);
                 }
             }
-        }
+        } 
     }
 
     // Update is called once per frame
@@ -114,6 +119,15 @@ public class MonitorDisplay : MonoBehaviour
 
         if (Age > 0)
             SetInstaDeathRateByAge(Age, Difficulty);
+
+        if (testing)
+        {
+            // change rate and stuff by key presses
+            if (Input.GetKeyDown(increaseRate)) Rate++;
+            if (Input.GetKeyDown(decreaseRate)) Rate--;
+            if (Input.GetKeyDown(increaseInstadeath)) instaDeathRate++;
+            if (Input.GetKeyDown(decreaseInstadeath)) instaDeathRate--;
+        }
     }
 
     // handle event updaters
@@ -224,6 +238,12 @@ public class MonitorDisplay : MonoBehaviour
     {
         if (input.Length > 0)
             this.Age = int.Parse(input);
+    }
+
+    public void DealWithHRConnection(bool b)
+    {
+        b = !b;
+        testing = b;
     }
 
 }

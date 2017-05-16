@@ -41,4 +41,10 @@ public class TutorialLevelMap : MonoBehaviour
         player.SetPosition(new Vector3(startPositionX, startHeight, startPositionZ));
         start = true;
     }
+
+    public float GetDistanceToGoal()
+    {
+        Vector3 playePos = player.GetPosition();
+        return Mathf.Sqrt(Mathf.Pow(playePos.x - endPositionX, 2) + Mathf.Pow(playePos.z - endPositionZ, 2));
+    }
 }

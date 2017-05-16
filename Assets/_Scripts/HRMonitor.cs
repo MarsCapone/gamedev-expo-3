@@ -13,6 +13,7 @@ public class HRMonitor {
     private int baudrate;
 
     private SerialPort stream;
+    private bool testing = false;
 
     public static int READ_TIMEOUT = 50;
 
@@ -33,9 +34,12 @@ public class HRMonitor {
     }
 
     public void Open() {
-        stream = new SerialPort(port, baudrate);
-        stream.ReadTimeout = READ_TIMEOUT;
-        stream.Open();
+        if (!testing)
+        {
+            stream = new SerialPort(port, baudrate);
+            stream.ReadTimeout = READ_TIMEOUT;
+            stream.Open();
+        }
     }
 
     public static void SetReadTimeout(int timeout)
@@ -44,17 +48,25 @@ public class HRMonitor {
     }
 
     public string Read(int timeout = 0) {
-        stream.ReadTimeout = timeout;
-        try {
-            return stream.ReadLine();
-        } catch (TimeoutException e) {
+        if (!testing)
+        {
+            stream.ReadTimeout = timeout;
+            try
+            {
+                return stream.ReadLine();
+            }
+            catch (TimeoutException e)
+            {
+                return null;
+            }
+        } else
+        {
             return null;
         }
     }
 
-
-    public string Read()
+    public void SetTesting(bool t)
     {
-        return stream.ReadLine();
+        this.testing = t;
     }
 }
