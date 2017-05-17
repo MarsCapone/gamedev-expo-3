@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class PlayerObject : MonoBehaviour {
 
-    public float activationRadius = 4;
+    public float activationRadius = 10;
 
-    public float heartRateMultiplierForClosingIn = 10;
+    public float heartRateMultiplierForClosingIn = 5;
 
 	// Use this for initialization
 	void Start () {
@@ -32,7 +32,7 @@ public class PlayerObject : MonoBehaviour {
             zombie.gameObject.GetComponent<ZombieObject>().Closing(this.gameObject);
         }
 
-        move();
+        //move();
 
     }
 
