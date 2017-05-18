@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Fire
   - Weapon
+  - Zombie
   layers:
   - Default
   - TransparentFX

@@ -1576,6 +1576,10 @@ Prefab:
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 100088, guid: 8141a1e3f5562ba4d910d6c02d5d213c, type: 3}
+      propertyPath: m_TagString
+      value: Zombie
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 8141a1e3f5562ba4d910d6c02d5d213c, type: 3}
   m_IsPrefabParent: 0
@@ -3194,7 +3198,7 @@ CapsuleCollider:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 559394602}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   m_Radius: 0.32
   m_Height: 1.69
@@ -5870,6 +5874,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1029011916}
   - component: {fileID: 1029011917}
+  - component: {fileID: 1029011918}
   m_Layer: 0
   m_Name: Tutorial Map
   m_TagString: Untagged
@@ -5931,6 +5936,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lightLevel: 0.01
+--- !u!114 &1029011918
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1029011915}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e76309e51222ea64c8b0f41750f804b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 1148068615}
+  startPositionX: 0
+  startPositionZ: 0
+  endPositionX: 52
+  endPositionZ: -2
+  startHeight: 1
+  error: 10
 --- !u!1001 &1029355614
 Prefab:
   m_ObjectHideFlags: 0
@@ -6600,6 +6623,12 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 2068fb7a4662e004ba9bf5e485eb49b6, type: 2}
   m_IsPrefabParent: 0
+--- !u!114 &1148068615 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114363348472706640, guid: 2068fb7a4662e004ba9bf5e485eb49b6,
+    type: 2}
+  m_PrefabInternal: {fileID: 1148068614}
+  m_Script: {fileID: 11500000, guid: 2bdfbfd756d05d540bf9e633d3ef1f3b, type: 3}
 --- !u!1001 &1148412457
 Prefab:
   m_ObjectHideFlags: 0
