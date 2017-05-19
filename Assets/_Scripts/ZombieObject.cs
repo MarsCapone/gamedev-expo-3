@@ -34,6 +34,18 @@ public class ZombieObject : MonoBehaviour {
 
     private NavMeshAgent navAgent;
 
+    private float pr;
+
+    void Awake()
+    {
+        MonitorDisplay.OnPulseRate += MonitorDisplay_OnPulseRate;
+    }
+
+    private void MonitorDisplay_OnPulseRate(float percentage)
+    {
+        pr = percentage;
+    }
+
 
     // Use this for initialization
     void Start () {
@@ -133,6 +145,18 @@ public class ZombieObject : MonoBehaviour {
     }
 
     public void Closing(GameObject player)
+    {
+        if (pr >= 1) DoClosing(player);
+        else if (pr > 0)
+        {
+            if (Random.value < pr * fractionMove)
+                DoClosing(player);
+            // else lucky escape
+        }
+        // else also luckyescape
+    }
+
+    private void DoClosing(GameObject player)
     {
         this.player = player;
         standing = false;

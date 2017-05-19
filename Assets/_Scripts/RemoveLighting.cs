@@ -8,6 +8,7 @@ public class RemoveLighting : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+
         Light[] allLights = gameObject.GetComponentsInChildren<Light>();
         for (int i = 0; i < allLights.Length; i++)
         {
