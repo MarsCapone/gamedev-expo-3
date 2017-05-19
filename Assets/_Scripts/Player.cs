@@ -59,14 +59,17 @@ public class Player : MonoBehaviour
 
         Vector3 fwd = transform.TransformDirection(Vector3.forward);
 
-        if (Physics.SphereCast(transform.position, RayThickness, fwd, out hit, RaycastDistance))
+        //check for Zombies, in layer 8, if found actrivate them
+        int layerMask = 1 << 8;
+        foreach (Collider zombie in Physics.OverlapSphere(gameObject.transform.position, 50f * pulseRatePercentage, layerMask))
         {
-            if (hit.collider.tag == "Zombie")
-            {
-                Zombie zombie = hit.collider.gameObject.GetComponent<Zombie>();
+            zombie.gameObject.GetComponent<Zombie>().Activate(this.gameObject);
+        }
 
-                zombie.Activate(gameObject);
-            } else if (hit.collider.tag == "Finish")
+    //check for goal
+    if (Physics.SphereCast(transform.position, RayThickness, fwd, out hit, RaycastDistance))
+        {
+            if (hit.collider.tag == "Finish")
             {
                 print("Seen goal");
                 if (OnReachedGoal != null)
