@@ -18,6 +18,9 @@ public class Player : MonoBehaviour
     public delegate void HealthUpdate(int health);
     public static event HealthUpdate OnHealthUpdate;
 
+    public delegate void ReachedGoal();
+    public static event ReachedGoal OnReachedGoal;
+
     private float pulseRatePercentage;
 
     void Awake()
@@ -63,6 +66,11 @@ public class Player : MonoBehaviour
                 Zombie zombie = hit.collider.gameObject.GetComponent<Zombie>();
 
                 zombie.Activate(gameObject);
+            } else if (hit.collider.tag == "Finish")
+            {
+                print("Seen goal");
+                if (OnReachedGoal != null)
+                    OnReachedGoal();
             }
         }
     }
