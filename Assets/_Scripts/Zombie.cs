@@ -151,8 +151,11 @@ public class Zombie : MonoBehaviour {
             moveChanceMultiplier = MoveChanceMultiplier;
         }
     }
-   
 
+    public void Closing(GameObject player)
+    {
+
+    }
    
    
     private void MonitorDisplay_OnPulseRate(float percentage)

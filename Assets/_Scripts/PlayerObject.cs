@@ -21,7 +21,7 @@ public class PlayerObject : MonoBehaviour {
         List<Collider> activeZombies = new List<Collider> (getZombiesInRange(activationRadius));
         foreach (Collider zombie in activeZombies)
         {
-            zombie.gameObject.GetComponent<ZombieObject>().activate(this.gameObject);
+            zombie.gameObject.GetComponent<Zombie>().Activate(this.gameObject);
         }
 
         //close in zombies
@@ -29,7 +29,7 @@ public class PlayerObject : MonoBehaviour {
         closeZombies.Except(activeZombies).ToList();
         foreach (Collider zombie in closeZombies)
         {
-            zombie.gameObject.GetComponent<ZombieObject>().Closing(this.gameObject);
+            zombie.gameObject.GetComponent<Zombie>().Closing(this.gameObject);
         }
 
         //move();
