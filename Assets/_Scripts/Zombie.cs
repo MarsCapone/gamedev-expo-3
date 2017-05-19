@@ -5,16 +5,17 @@ using UnityEngine.AI;
 
 public class Zombie : MonoBehaviour {
 
-    public int MinHitsToDeath = 1;
-    public int MaxHitsToDeath = 3;
+    public int Health = 10;
+    public float HitChance = 0.5f;
+    public float HitDistance = 4f;
+
 
     public AudioClip AttackSound;
     public AudioClip DeadSound;
 
-    private int hitsToDeath;
-    private int currentHits = 0;
     private AudioSource audioSource;
     private bool attackOccurring;
+
 
     // -----------------------------
 
@@ -54,7 +55,6 @@ public class Zombie : MonoBehaviour {
         moveChance = MoveChanceMultiplier;
         speed = Speed;
 
-        hitsToDeath = Random.Range(MinHitsToDeath, MaxHitsToDeath);
         audioSource = GetComponent<AudioSource>();
     }
 
@@ -109,27 +109,17 @@ public class Zombie : MonoBehaviour {
         // move the zombie
         navAgent.speed = speed;
         navAgent.SetDestination(currentDest);
+
+        HandleAttacks();
     }
 
 
-    void OnTriggerEnter(Collider other)
+    void HandleAttacks()
     {
-        if (other.gameObject.tag == "Weapon" && attackOccurring)
+        if (Health < 0)
         {
-            // being hit 
-            if (ratePercentage < 1)
-            {
-                // attacks work
-                audioSource.clip = AttackSound;
-                audioSource.Play();
-                currentHits++;
-
-                if (currentHits >= hitsToDeath)
-                {
-                    // die
-                    gameObject.SetActive(false);
-                }
-            }
+            // die
+            gameObject.SetActive(false);
         }
     }
 
@@ -170,8 +160,17 @@ public class Zombie : MonoBehaviour {
         ratePercentage = percentage;
     }
 
-    private void AnimateWeapon_OnAttack(bool b)
+    private void AnimateWeapon_OnAttack(Vector3 position)
     {
-        attackOccurring = b;
+        if ((position - gameObject.transform.position).sqrMagnitude <= HitDistance && ratePercentage < 1 && gameObject.activeInHierarchy)
+        {
+            print("Zombie attacked");
+            audioSource.clip = AttackSound;
+            audioSource.Play();
+
+            if (Random.value < HitChance)
+                print("Zombie lost health");
+                Health--;
+        }
     }
 }

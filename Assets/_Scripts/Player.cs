@@ -4,8 +4,13 @@ using System;
 
 public class Player : MonoBehaviour
 {
-    public int Health = 10;
+    public int Health = 1000;
+    public int MaxHealth = 1000;
     public float RaycastDistance = 5f;
+    public float RayThickness = 1f;
+
+    public int HealthIncrease = 1;
+    public float HealthIncreaseTime = 1;
 
     public delegate void DeadNow();
     public static event DeadNow OnDeadNow;
@@ -18,6 +23,16 @@ public class Player : MonoBehaviour
     void Awake()
     {
         MonitorDisplay.OnPulseRate += MonitorDisplay_OnPulseRate;
+    }
+
+    void Start()
+    {
+        if (OnHealthUpdate != null)
+        {
+            OnHealthUpdate(Health);
+        }
+
+        InvokeRepeating("IncreaseHealth", 2f, HealthIncreaseTime);
     }
 
     private void MonitorDisplay_OnPulseRate(float percentage)
@@ -41,7 +56,7 @@ public class Player : MonoBehaviour
 
         Vector3 fwd = transform.TransformDirection(Vector3.forward);
 
-        if (Physics.Raycast(transform.position, fwd, out hit, RaycastDistance))
+        if (Physics.SphereCast(transform.position, RayThickness, fwd, out hit, RaycastDistance))
         {
             if (hit.collider.tag == "Zombie")
             {
@@ -62,11 +77,11 @@ public class Player : MonoBehaviour
         }
     }
 
-    void OnTriggerEnter(Collider other)
+
+    private void OnCollisionStay(Collision collision)
     {
-        if (other.tag == "Zombie")
+        if (collision.gameObject.tag == "Zombie")
         {
-            // being attacked
             Health--;
         }
     }
@@ -76,6 +91,14 @@ public class Player : MonoBehaviour
         print("Ur dead now!!!");
         if (OnDeadNow != null)
             OnDeadNow();
+    }
+
+    void IncreaseHealth()
+    {
+        if (Health < MaxHealth && pulseRatePercentage < 1)
+        {
+            Health+=HealthIncrease;
+        } 
     }
 
 

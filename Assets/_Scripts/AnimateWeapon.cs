@@ -4,7 +4,7 @@ using System.Collections;
 public class AnimateWeapon : MonoBehaviour
 {
 
-    public delegate void Attack(bool b);
+    public delegate void Attack(Vector3 location);
     public static event Attack OnAttack;
 
     private Animation animation;
@@ -20,13 +20,8 @@ public class AnimateWeapon : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             if (OnAttack != null)
-                OnAttack(true);
+                OnAttack(GetComponentInParent<Player>().transform.position);
             animation.Play("AttackAnimation");
-        }
-        else
-        {
-            if (OnAttack != null)
-                OnAttack(false);
         }
     }
 }
